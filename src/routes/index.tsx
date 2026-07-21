@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import logo1 from "@/assets/logo1.png";
+import { AppointmentModal } from "@/components/site/AppointmentModal";
 import {
   Activity,
   Ambulance,
@@ -34,6 +35,7 @@ import { EcgLine } from "@/components/site/EcgLine";
 import { Reveal } from "@/components/site/Reveal";
 import { AnimatedCounter } from "@/components/site/AnimatedCounter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { AppointmentStatus } from "@/components/site/AppointmentStatus";
 
 import hero from "@/assets/hero.jpg";
 import doc1 from "@/assets/doctor-1.jpg";
@@ -266,12 +268,13 @@ function Hero() {
           </p>
 
           <div className="hero-anim mt-9 flex flex-wrap items-center gap-3">
-            <a
-              href="#appointment"
-              className="btn-lux inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-[oklch(0.18_0.05_265)] shadow-glow"
-            >
-              <Calendar className="h-4 w-4" /> Book Appointment
-            </a>
+            <AppointmentModal>
+              <button
+                className="btn-lux inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-[oklch(0.18_0.05_265)] shadow-glow cursor-pointer"
+              >
+                <Calendar className="h-4 w-4" /> Book Appointment
+              </button>
+            </AppointmentModal>
             <a
               href="tel:112"
               className="btn-lux inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[oklch(0.55_0.22_20)] to-[oklch(0.65_0.19_30)] px-6 py-3.5 text-sm font-semibold text-white shadow-crimson"
@@ -657,9 +660,11 @@ function Doctors() {
               Cardiologists you can <span className="grad-text">trust with a lifetime</span>.
             </h2>
           </Reveal>
-          <a href="#appointment" className="btn-lux inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground">
-            Consult a doctor <ChevronRight className="h-4 w-4" />
-          </a>
+          <AppointmentModal>
+            <button className="btn-lux inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground cursor-pointer">
+              Consult a doctor <ChevronRight className="h-4 w-4" />
+            </button>
+          </AppointmentModal>
         </div>
 
         <div ref={gridRef} className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -715,9 +720,11 @@ function Doctors() {
                     {selectedDoctor.bio}
                   </div>
                   <div className="mt-6 flex gap-3">
-                    <a href="#appointment" onClick={() => setSelectedDoctor(null)} className="btn-lux flex-1 text-center items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity">
-                      Book Appointment
-                    </a>
+                    <AppointmentModal>
+                      <button onClick={() => setSelectedDoctor(null)} className="btn-lux flex-1 text-center items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer">
+                        Book Appointment
+                      </button>
+                    </AppointmentModal>
                   </div>
                 </div>
               </div>
@@ -1060,17 +1067,19 @@ function Field({ label, children, dark = false }: { label: string; children: Rea
    ═══════════════════════════════════════════════════ */
 function Appointment() {
   const [sent, setSent] = useState(false);
+  const [activeTab, setActiveTab] = useState<"book" | "status">("book");
+
   return (
     <section id="appointment" className="relative overflow-hidden py-28 lg:py-36">
       <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-2 lg:items-center">
         <Reveal variant="fade-left">
-          <SectionEyebrow>Book an appointment</SectionEyebrow>
+          <SectionEyebrow>Appointments</SectionEyebrow>
           <h2 className="mt-4 font-display text-4xl font-bold leading-tight sm:text-5xl">
             Take the first step. <br /> <span className="grad-text">We'll take the next hundred.</span>
           </h2>
           <p className="mt-5 max-w-xl text-lg text-muted-foreground">
             Share a few details and our care team will confirm your appointment within the hour.
-            For emergencies, please call our 24×7 helpline immediately.
+            Or track your existing appointment status.
           </p>
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
             <InfoTile icon={Phone} title="Emergency" value="24/7 Helpline" />
@@ -1080,41 +1089,74 @@ function Appointment() {
         </Reveal>
 
         <Reveal variant="fade-right">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setSent(true);
-            }}
-            className="rounded-3xl border border-border bg-card p-8 shadow-luxe"
-          >
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Input label="Full name" name="name" required />
-              <Input label="Phone" name="phone" type="tel" required />
-              <Input label="Email" name="email" type="email" className="sm:col-span-2" />
-              <div className="sm:col-span-2">
-                <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-muted-foreground">Department</label>
-                <select className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-ring">
-                  <option>Interventional Cardiology</option>
-                  <option>Cardiac Surgery</option>
-                  <option>Electrophysiology</option>
-                  <option>Preventive Cardiology</option>
-                  <option>Emergency</option>
-                </select>
-              </div>
-              <Input label="Preferred date" name="date" type="date" className="sm:col-span-2" />
-              <div className="sm:col-span-2">
-                <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-muted-foreground">Notes</label>
-                <textarea rows={3} className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-ring" />
-              </div>
-            </div>
+          <div className="mb-6 flex overflow-hidden rounded-full border border-border bg-muted/50 p-1">
             <button
-              type="submit"
-              className="btn-lux mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[oklch(0.42_0.18_265)] to-[oklch(0.62_0.15_210)] px-6 py-3.5 text-sm font-semibold text-white shadow-glow"
+              onClick={() => setActiveTab("book")}
+              className={`flex-1 rounded-full py-2.5 text-sm font-semibold transition-all ${
+                activeTab === "book" ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"
+              }`}
             >
-              {sent ? "Request received ✓" : "Request appointment"}
-              {!sent && <ArrowRight className="h-4 w-4" />}
+              Book Appointment
             </button>
-          </form>
+            <button
+              onClick={() => setActiveTab("status")}
+              className={`flex-1 rounded-full py-2.5 text-sm font-semibold transition-all ${
+                activeTab === "status" ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Check Status
+            </button>
+          </div>
+
+          {activeTab === "book" ? (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const phoneStr = formData.get("phone") as string;
+                if (phoneStr) {
+                  const cleanPhone = phoneStr.replace(/\D/g, "");
+                  const existing = JSON.parse(localStorage.getItem("pulse_bookings") || "{}");
+                  existing[cleanPhone] = { status: "pending", timestamp: Date.now() };
+                  localStorage.setItem("pulse_bookings", JSON.stringify(existing));
+                }
+                setSent(true);
+              }}
+              className="rounded-3xl border border-border bg-card p-8 shadow-luxe"
+            >
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Input label="Full name" name="name" required />
+                <Input label="Phone" name="phone" type="tel" required />
+                <Input label="Email" name="email" type="email" className="sm:col-span-2" />
+                <div className="sm:col-span-2">
+                  <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-muted-foreground">Department</label>
+                  <select className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-ring">
+                    <option>Interventional Cardiology</option>
+                    <option>Cardiac Surgery</option>
+                    <option>Electrophysiology</option>
+                    <option>Preventive Cardiology</option>
+                    <option>Emergency</option>
+                  </select>
+                </div>
+                <Input label="Preferred date" name="date" type="date" className="sm:col-span-2" />
+                <div className="sm:col-span-2">
+                  <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-muted-foreground">Notes</label>
+                  <textarea rows={3} className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-ring" />
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="btn-lux mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[oklch(0.42_0.18_265)] to-[oklch(0.62_0.15_210)] px-6 py-3.5 text-sm font-semibold text-white shadow-glow"
+              >
+                {sent ? "Request received ✓" : "Request appointment"}
+                {!sent && <ArrowRight className="h-4 w-4" />}
+              </button>
+            </form>
+          ) : (
+            <div className="rounded-3xl border border-border bg-card p-8 shadow-luxe min-h-[450px]">
+              <AppointmentStatus />
+            </div>
+          )}
         </Reveal>
       </div>
     </section>
@@ -1395,9 +1437,11 @@ function Footer() {
               <h2 className="font-display text-4xl font-bold text-white sm:text-5xl lg:text-6xl">Your Heart, <br/>Our Priority.</h2>
               <p className="mt-6 text-xl text-white/80">Book a consultation with our top specialists today.</p>
             </div>
-            <button className="flex h-14 shrink-0 items-center justify-center gap-3 rounded-full bg-white px-8 text-lg font-bold text-[oklch(0.4_0.18_265)] shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95 group-hover:-translate-x-2">
-              Book Appointment <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-            </button>
+            <AppointmentModal>
+              <button className="flex h-14 shrink-0 items-center justify-center gap-3 rounded-full bg-white px-8 text-lg font-bold text-[oklch(0.4_0.18_265)] shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95 group-hover:-translate-x-2 cursor-pointer">
+                Book Appointment <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+              </button>
+            </AppointmentModal>
           </div>
         </div>
       </div>

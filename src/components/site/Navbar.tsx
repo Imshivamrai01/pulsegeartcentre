@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Menu, Phone, X } from "lucide-react";
 import logo1 from "@/assets/logo1.png";
+import { AppointmentModal } from "@/components/site/AppointmentModal";
 
 const links = [
   { href: "#about", label: "About" },
@@ -69,12 +70,13 @@ export function Navbar() {
             >
               <Phone className="h-4 w-4" /> 09891596102
             </a>
-            <a
-              href="#appointment"
-              className="btn-lux inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-[oklch(0.18_0.05_265)] shadow-glow hover:bg-white/90"
-            >
-              Book Appointment
-            </a>
+            <AppointmentModal>
+              <button
+                className="btn-lux inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-[oklch(0.18_0.05_265)] shadow-glow hover:bg-white/90"
+              >
+                Book Appointment
+              </button>
+            </AppointmentModal>
           </div>
 
           <button
@@ -87,30 +89,29 @@ export function Navbar() {
           </button>
         </nav>
 
-        {open && (
-          <div className="glass-dark mt-3 rounded-2xl p-4 text-white lg:hidden">
-            <ul className="flex flex-col gap-1">
-              {links.map((l) => (
-                <li key={l.href}>
-                  <a
-                    onClick={() => setOpen(false)}
-                    className="block rounded-lg px-3 py-2 text-sm hover:bg-white/10"
-                    href={l.href}
-                  >
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <a
-              href="#appointment"
+        <div className={`glass-dark mt-3 rounded-2xl p-4 text-white lg:hidden ${open ? 'block' : 'hidden'}`}>
+          <ul className="flex flex-col gap-1">
+            {links.map((l) => (
+              <li key={l.href}>
+                <a
+                  onClick={() => setOpen(false)}
+                  className="block rounded-lg px-3 py-2 text-sm hover:bg-white/10"
+                  href={l.href}
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <AppointmentModal>
+            <button
               onClick={() => setOpen(false)}
-              className="mt-3 block rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-[oklch(0.18_0.05_265)]"
+              className="mt-3 block w-full rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-[oklch(0.18_0.05_265)]"
             >
               Book Appointment
-            </a>
-          </div>
-        )}
+            </button>
+          </AppointmentModal>
+        </div>
       </div>
     </header>
   );
